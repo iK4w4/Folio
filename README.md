@@ -30,11 +30,11 @@ Grab `Folio.exe` from the [Releases](https://github.com/iK4w4/Folio/releases) pa
 
 ## Screenshots
 
-![Folio in Light mode with the Mist Slate palette](screenshots/light-white.png)
-*Light mode — Mist Slate*
+![Folio in Light mode, Split view](screenshots/light-white.png)
+*Light mode — Mist Slate, Split view with live preview*
 
-![Folio in Light mode with the Royal Blue palette](screenshots/light-blue.png)
-*Light mode — Royal Blue*
+![Folio in Light mode, Preferences open](screenshots/light-blue.png)
+*Light mode — Royal Blue, Preferences with the sixteen palettes*
 
 ## Features
 
