@@ -17,14 +17,14 @@
 
 import { PaletteId } from '../types/note';
 
-interface PicoPalette {
+interface FolioPalette {
   id: PaletteId;
   name: string;
   slots: [string, string, string, string, string, string];
   slot6: 'accent2' | 'slate';
 }
 
-export const PALETTES: PicoPalette[] = [
+export const PALETTES: FolioPalette[] = [
   { id: 'forest', name: 'Forest', slots: ['#0F1F17', '#1E3A2E', '#3E5A3F', '#6B7F67', '#C7CBB8', '#3D4337'], slot6: 'slate' },
   { id: 'ember', name: 'Amber Navy', slots: ['#0B132B', '#1C2541', '#3A506B', '#5BC0DE', '#F4D6B0', '#D97706'], slot6: 'accent2' },
   { id: 'sage', name: 'Sage Gold', slots: ['#0B0F0D', '#1F2A1F', '#3E5A3F', '#8CA98C', '#D9C7A3', '#B08D57'], slot6: 'accent2' },
@@ -45,11 +45,11 @@ export const PALETTES: PicoPalette[] = [
 
 // Forest is the first entry in PALETTES and the fallback when a stored
 // palette id is unknown — one definition, referenced, never copied.
-function paletteById(id: string): PicoPalette {
+function paletteById(id: string): FolioPalette {
   const found = PALETTES.find((p) => p.id === id);
   if (!found) {
     console.warn(`Unknown palette id "${id}", falling back to Forest.`);
-    return PALETTES[0] as PicoPalette;
+    return PALETTES[0] as FolioPalette;
   }
   return found;
 }
@@ -140,7 +140,7 @@ interface GlassTokens {
   auroraB: string;
 }
 
-function deriveGlassTokens(palette: PicoPalette, mode: 'dark' | 'light'): GlassTokens {
+function deriveGlassTokens(palette: FolioPalette, mode: 'dark' | 'light'): GlassTokens {
   const [s1, s2, s3, s4, s5, s6] = palette.slots;
   const accent2 = palette.slot6 === 'accent2' ? s6 : s3;
 
@@ -242,7 +242,7 @@ function selectionPair(
   return { selectionBg, selectionText };
 }
 
-function deriveTheme(palette: PicoPalette, mode: 'dark' | 'light'): ThemeTokens {
+function deriveTheme(palette: FolioPalette, mode: 'dark' | 'light'): ThemeTokens {
   const [s1, s2, s3, s4, s5, s6] = palette.slots;
   const accent2 = palette.slot6 === 'accent2' ? s6 : s3;
   // A hot accent-2 is a better danger than an imported red; otherwise a
