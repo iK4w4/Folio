@@ -11,6 +11,7 @@ Just run Folio.exe. No install. It creates its files next to the exe:
   trash.json      trash records
   Trash/          deleted notes (restorable inside the app)
   All Notes.txt   one-file backup of everything, updated on every change
+  All Notes.previous.txt   the previous backup, kept in case the newest is lost
 
 Copy the whole folder to a USB drive or another PC and everything moves
 with it. Your notes stay readable as plain Markdown even without the app.
