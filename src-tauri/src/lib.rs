@@ -885,6 +885,14 @@ fn rewrite_backup() {
 // backup has exactly one temp-file implementation to keep correct.
 fn rewrite_backup_atomic(notes: &[Note]) -> Result<(), String> {
     let backup_path = get_app_dir().join("All Notes.txt");
+    // Keep one previous generation: if the newest backup is ever lost,
+    // corrupted, or deleted by accident, the restore can fall back to
+    // `All Notes.previous.txt` instead of having no backup at all.
+    // Best-effort only — a failed rotation must never fail the backup.
+    if backup_path.exists() {
+        let prev_path = get_app_dir().join("All Notes.previous.txt");
+        let _ = fs::copy(&backup_path, &prev_path);
+    }
 
     let divider = "=".repeat(80);
     let mut output = String::new();
@@ -2151,7 +2159,15 @@ fn toggle_pin(file_name: String, pinned: bool) -> Result<bool, String> {
 #[tauri::command]
 fn restore_backup() -> Result<RestoreResult, String> {
     let _guard = lock_registry();
+    // Fall back to the previous generation when the newest backup is
+    // missing (deleted or corrupted) — one lost file must not mean no
+    // backup at all.
     let backup_path = get_app_dir().join("All Notes.txt");
+    let backup_path = if backup_path.exists() {
+        backup_path
+    } else {
+        get_app_dir().join("All Notes.previous.txt")
+    };
     if !backup_path.exists() {
         return Ok(RestoreResult {
             restored_count: 0,
