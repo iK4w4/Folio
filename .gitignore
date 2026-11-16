@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+src-tauri/target/
+src-tauri/gen/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Binaries
+*.exe
+
+# App data (created next to the exe when Folio runs from this folder)
+Notes/
+Trash/
+All Notes.txt
+settings.json
+pins.json
+folders.json
+trash.json

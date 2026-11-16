@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Folio</title>
+    <link rel="icon" type="image/png" href="/folio-icon.png" />
+    <meta name="description" content="A small, fast, portable notes app with liquid glass design, offline plain markdown storage, and instant autosave." />
+    <meta property="og:title" content="Folio" />
+    <meta property="og:description" content="A small, fast, portable notes app with liquid glass design, offline plain markdown storage, and instant autosave." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- No external fonts: the app is fully offline. The UI uses the system
+         font stack (set in index.css) so it never waits on a network font. -->
+    <script>
+      // Immediate theme initialization to prevent theme flash.
+      // Zoom is NOT set here: the app applies the saved zoom with the
+      // native WebView zoom once it mounts — CSS zoom is not used for this.
+      try {
+        const savedSettings = localStorage.getItem('folio_settings');
+        if (savedSettings) {
+          const parsed = JSON.parse(savedSettings);
+          if (parsed.theme === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+  </head>
+  <body class="bg-[#0b0f17] text-neutral-100 antialiased overflow-hidden select-none">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

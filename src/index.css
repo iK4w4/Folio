@@ -1,0 +1,692 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Folio — liquid glass design system ("premium glassmorphism").
+   Colors come from the 16 Pico palettes (src/lib/themes.ts): applyTheme()
+   sets --bg / --surface / --raised / --border / --text / --muted /
+   --faint / --accent / --accent-2 / --accent-text / --danger / --ok /
+   --warn / --shadow PLUS the glass material tokens --glass /
+   --glass-strong / --glass-border / --glass-highlight / --aurora-a /
+   --aurora-b / --blur / --saturate on <html>. The defaults below are the
+   Forest (dark) derivation, so the app looks right before settings load.
+   Glass surfaces are translucent so the aurora backdrop (#aurora) and
+   accent-tinted light bleed through; backdrop-filter (with -webkit-
+   prefix for WKWebView) does the frosting. 100% offline: system font
+   stack only, no external fonts or images.
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* System font stack only — no web fonts, the app is fully offline.
+       Segoe UI is what Windows renders; the rest cover other systems. */
+    --font-sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Cascadia Mono', Consolas, 'Courier New', monospace;
+
+    /* Forest (dark) defaults — replaced by applyTheme() at runtime. */
+    --bg: #0F1F17;
+    --surface: #0F1F17;
+    --raised: #17291f;
+    --border: #2b3f31;
+    --text: #C7CBB8;
+    --muted: #a8ad97;
+    --faint: #8b917e;
+    --accent: #6B7F67;
+    --accent-2: #3E5A3F;
+    --accent-text: #ffffff;
+    --danger: #f87171;
+    --danger-text: #0F1F17;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --shadow: rgba(107, 127, 103, 0.25);
+
+    /* Forest (dark) selection pair — the selectionPair() derivation in
+       themes.ts (wash over bg, 5.73:1 vs the text). The ::selection rule
+       below carries fallbacks, but these are the real defaults. */
+    --selection-bg: #384a3b;
+    --selection-text: #c7cbb8;
+
+    /* Glass material tokens (Forest dark derivation).
+       --glass* are full rgba() colors (translucent surfaces), --blur and
+       --saturate feed backdrop-filter, --aurora-* tint the backdrop glow. */
+    --glass: rgba(20, 39, 30, 0.62);
+    --glass-strong: rgba(23, 46, 36, 0.84);
+    --glass-border: rgba(199, 203, 184, 0.16);
+    --glass-highlight: rgba(199, 203, 184, 0.10);
+    --aurora-a: rgba(107, 127, 103, 0.16);
+    --aurora-b: rgba(62, 90, 63, 0.14);
+    --blur: 16px;
+    --saturate: 180%;
+
+    /* Shared motion curves. */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * {
+    font-family: var(--font-sans);
+    box-sizing: border-box;
+  }
+
+  code, pre, kbd, .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
+  }
+
+  /* --- Selection: one pair of variables, computed per palette + mode ---- */
+  /* The colors come from selectionPair() in themes.ts, which guarantees
+     >= 4.5:1 contrast in both modes. Two constraints shape this rule.
+     First, it lives in the base layer, so no utility-layer rule on the
+     body (or any ancestor of the editor) may set selection colors — a
+     utilities-layer rule would win and repaint every selection.
+     Second, the variables are solid hexes: a translucent wash renders
+     the selected text in (nearly) the wash color in WebView2, so no
+     color-mix ever reaches ::selection. */
+  ::selection,
+  textarea::selection,
+  .md-preview ::selection {
+    background-color: var(--selection-bg, #6b7f67);
+    color: var(--selection-text, #c7cbb8);
+  }
+
+  /* --- Focus rings: visible, accent-based, keyboard-only --------------- */
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* --- Slim glass scrollbars, tinted by the theme ---------------------- */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--faint) 55%, transparent) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--faint) 45%, transparent);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent) 60%, transparent);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* --- Range slider: soft tinted track, glowing accent thumb ----------
+     The track is a quiet accent wash; the solid accent THUMB is the
+     focal point, and the value is already shown numerically next to
+     the label. */
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 9999px;
+    /* The base is a text-tinted 22% so the track reads in both modes —
+       an accent-only base over the glass border is nearly invisible on
+       a white row in light mode. */
+    background: color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--text) 22%, transparent));
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid color-mix(in srgb, var(--accent-text) 85%, transparent);
+    box-shadow: 0 1px 4px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  input[type='range']::-moz-range-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--text) 22%, transparent));
+  }
+  input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid color-mix(in srgb, var(--accent-text) 85%, transparent);
+    box-shadow: 0 1px 4px var(--shadow);
+  }
+
+  /* --- Checkboxes: soft rounded squares, not hard OS squares ----------
+     The native checkbox renders as a harsh solid square in WebView2,
+     so it is custom-drawn: 18px, 6px radius, soft theme border on a
+     surface fill; checked = accent fill with a white check, no hard
+     edge. */
+  input[type='checkbox'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    /* The border is text-tinted so the unchecked box reads in both
+       modes — a --border edge on a --surface fill is nearly invisible
+       on a white row in light mode. */
+    border: 1.5px solid color-mix(in srgb, var(--text) 35%, transparent);
+    background: var(--surface);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s var(--ease-out);
+  }
+  input[type='checkbox']:hover {
+    border-color: var(--accent);
+  }
+  input[type='checkbox']:checked {
+    background-color: var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+    background-size: 12px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: var(--accent);
+  }
+  input[type='checkbox']:active {
+    transform: scale(0.92);
+  }
+  input[type='checkbox']:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+/* --- Theme token utilities (kept as static classes over the CSS vars) --- */
+
+.theme-bg { background-color: var(--bg); color: var(--text); }
+.theme-raised { background-color: var(--raised); color: var(--text); }
+.theme-border { border-color: var(--border); }
+.theme-text { color: var(--text); }
+.theme-muted { color: var(--muted); }
+.theme-faint { color: var(--faint); }
+.theme-accent { color: var(--accent); }
+.theme-danger { color: var(--danger); }
+
+/* ==========================================================================
+   Glass material system. Every glass surface shares the same recipe:
+   translucent fill + backdrop blur/saturate + hairline rgba border +
+   inset top specular highlight + layered drop shadow. --blur / --saturate
+   are theme-controlled (Settings ▸ Glassiness maps to them in applyTheme).
+   ========================================================================== */
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 8px 32px var(--shadow),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  color: var(--text);
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(calc(var(--blur) * 1.25)) saturate(var(--saturate));
+  backdrop-filter: blur(calc(var(--blur) * 1.25)) saturate(var(--saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 16px 48px var(--shadow),
+    0 4px 16px rgba(0, 0, 0, 0.16);
+  color: var(--text);
+}
+
+/* Large glass surface (panels, modals, editor chrome). */
+.glass-panel {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 12px 40px var(--shadow),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  color: var(--text);
+}
+
+/* Solid opaque panel (sidebar FolderPanel). The glass recipe is 62%
+   translucent and only hides what is behind it via backdrop-filter; if
+   that filter is weak in the WebView, note text shows through the panel.
+   A sidebar panel is a solid surface, not a floating overlay, so it gets
+   a fully opaque --surface fill with the same border/radius/shadow. */
+.panel-solid {
+  background-color: var(--surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 12px 40px var(--shadow),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  color: var(--text);
+}
+
+/* Settings rows: a SOFT solid surface, not glass.
+   A settings row is a small step up from its container, not a floating
+   card: solid --raised fill, a soft theme border, and a whisper of a
+   shadow. Same 14px radius on every row so the column reads as one
+   aligned set. */
+/* --- Visible control borders -------------------------------------------- */
+/* --border is too pale in light mode for anything the user must see and
+   tap (rows, buttons, inputs, swatches): it reads as a white card on a
+   white modal with a hairline edge. Text-tinted borders read in both
+   modes (dark ink on light, pale ink on dark). */
+.control-border { border-color: color-mix(in srgb, var(--text) 22%, transparent); }
+
+/* Palette bar: one solid bar, not six dots. The bar IS the preview, so
+   it is substantial: 20px tall, 72px wide, a single framed strip. Each
+   of the 6 segments has its own border and a 2px gap to its neighbour,
+   so every color reads in both modes, on any row background. The
+   borders are SOLID colors (text mixed over --raised), never
+   translucent — a translucent border is painted over the segment's own
+   fill, so on a dark fill it blends into the fill and vanishes. */
+.palette-bar {
+  width: 72px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 7px;
+  border: 1.5px solid color-mix(in srgb, var(--text) 30%, var(--raised));
+  background-color: color-mix(in srgb, var(--text) 7%, var(--raised));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.palette-bar-seg {
+  flex: 1;
+  min-width: 0;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--text) 25%, var(--raised));
+}
+
+/* Solid control card: a background step AND a border, both tinted from
+   --text so they read in both modes. A control must never be a bare
+   outline on glass, and must never rely on a hairline border alone —
+   the background step makes it a solid card even if the border were
+   removed. */
+.control-card {
+  background-color: color-mix(in srgb, var(--text) 7%, var(--raised));
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+.setting-row {
+  background-color: color-mix(in srgb, var(--text) 7%, var(--raised));
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+  color: var(--text);
+}
+
+/* Folder rows: ONE inset ring, never a border + ring.
+   An inset ring is painted INSIDE the border box: it follows the exact
+   border-radius, can never be clipped by the list's overflow, and never
+   double-strokes. The unselected state carries the same transparent ring
+   so selecting a row changes only the color — the shape never moves.
+   No press-scale: it would warp the ring while clicking. */
+.folder-row {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1.5px transparent;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+.folder-row:hover {
+  background-color: var(--raised);
+}
+.folder-row.selected {
+  background-color: var(--raised);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.folder-row.drag-over {
+  background-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* Bold interface text : bolds the app's own UI — sidebar, lists,
+   buttons, labels, menus — at semibold (600), the standard UI-bold
+   weight. It must NEVER reach the note itself: the editor textarea and
+   gutter pin fontWeight 400 inline, and the markdown preview is shielded
+   here (its headings keep their own explicit weights, which beat the
+   inherited 600 — and a bolded note body would be wrong either way). */
+.ui-bold { font-weight: 600; }
+.ui-bold .md-preview { font-weight: 400; }
+
+/* Small pill chips / badges / tag pills. */
+.glass-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 9999px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  color: var(--muted);
+  font-size: 0.6875rem;
+  line-height: 1.25;
+}
+
+/* Floating menus / dropdowns: strongest glass + menu-in entrance. */
+.glass-menu {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(calc(var(--blur) * 1.5)) saturate(var(--saturate));
+  backdrop-filter: blur(calc(var(--blur) * 1.5)) saturate(var(--saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 56px var(--shadow),
+    0 6px 20px rgba(0, 0, 0, 0.22);
+  color: var(--text);
+  transform-origin: top center;
+  animation: menu-in 0.16s var(--ease-out) both;
+}
+
+/* ==========================================================================
+   Aurora backdrop: fixed, ambient radial glow tinted by the theme's two
+   accents (--aurora-a / --aurora-b). Render ONE of these as the first
+   child of the app root: <div className="aurora" aria-hidden="true" />.
+   z-index 0 + pointer-events:none keeps it under interactive content;
+   the gradients are translucent so glass panels above it glow through.
+   Oversized (inset -10%) so the drift animation never exposes an edge.
+   ========================================================================== */
+
+.aurora {
+  position: fixed;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 38rem at 18% 12%, var(--aurora-a), transparent 65%),
+    radial-gradient(42rem 42rem at 82% 18%, var(--aurora-b), transparent 65%),
+    radial-gradient(34rem 34rem at 72% 88%, var(--aurora-a), transparent 65%),
+    radial-gradient(30rem 30rem at 22% 85%, var(--aurora-b), transparent 65%);
+  animation: aurora-drift 28s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+/* --- Note cards: frosted glass, spring entrance with stagger ----------- */
+/* The list sets style={{ '--i': index }} per card; the delay is clamped */
+/* so long lists never keep later cards hidden for more than ~0.5s. */
+
+.note-card {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 2px 10px rgba(0, 0, 0, 0.10);
+  animation: card-in 0.5s var(--ease-spring) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out), border-color 0.15s ease, background-color 0.15s ease;
+}
+
+/* Large lists: backdrop-filter per card is the most expensive paint op in
+   the app (dozens of simultaneous blurs). Past the 30th card we drop the
+   filter — the card stays frosted via its translucent fill, which is
+   visually identical over the aurora backdrop. */
+.note-card:nth-child(n+31) {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.note-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 10px 28px var(--shadow),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+}
+.note-card.active {
+  border-color: var(--accent);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--accent),
+    0 8px 24px var(--shadow);
+}
+.note-card.active:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Buttons: gradient accent, frosted ghost --------------------------- */
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: var(--accent-text);
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 4px 18px var(--shadow);
+  transition: filter 0.15s ease, transform 0.12s var(--ease-spring), box-shadow 0.18s ease;
+}
+.btn-accent:hover {
+  filter: brightness(1.10) saturate(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 24px var(--shadow);
+}
+.btn-accent:active { transform: scale(0.97); }
+
+.btn-ghost {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s var(--ease-out);
+}
+.btn-ghost:hover {
+  background: var(--glass-strong);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
+}
+.btn-ghost:active { transform: scale(0.97); }
+
+/* --- Markdown preview glass (opt-in: add class "md-preview") ----------- */
+
+.md-preview :is(h1, h2, h3, h4, h5, h6) { color: var(--text); margin: 1.25em 0 0.5em; line-height: 1.3; }
+.md-preview h1 { font-size: 1.75rem; font-weight: 700; padding-bottom: 0.5rem; border-bottom: 1px solid var(--glass-border); }
+.md-preview h2 { font-size: 1.375rem; font-weight: 650; }
+/* h3–h6 need an explicit size and weight — Tailwind's preflight resets
+   headings to body text, so an H3 would look identical to a paragraph. */
+.md-preview h3 { font-size: 1.125rem; font-weight: 650; }
+.md-preview h4 { font-size: 1rem; font-weight: 650; }
+.md-preview h5 { font-size: 0.875rem; font-weight: 650; }
+.md-preview h6 { font-size: 0.875rem; font-weight: 600; color: var(--muted); }
+.md-preview p, .md-preview li { color: var(--muted); line-height: 1.7; }
+/* Lists: Tailwind's preflight strips list markers and padding, so the
+   markers and the indentation are restored here, with accent markers. */
+.md-preview :is(ol, ul) { margin: 0.75em 0; padding-left: 1.5rem; }
+.md-preview ol { list-style: decimal; }
+.md-preview ul { list-style: disc; }
+.md-preview li { margin: 0.25em 0; }
+.md-preview li > p { margin: 0; }
+.md-preview :is(ol, ul) :is(ol, ul) { margin: 0.25em 0; }
+.md-preview li::marker { color: var(--accent); font-weight: 600; }
+/* Strikethrough: the sanitizer allowlist keeps <del> and <s>. */
+.md-preview :is(del, s) { text-decoration: line-through; }
+/* Task lists: the disabled checkbox marked emits, spaced from
+   its label like the custom checkbox elsewhere. */
+.md-preview li input[type='checkbox'] { margin-right: 0.5rem; vertical-align: -2px; }
+.md-preview a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed color-mix(in srgb, var(--accent) 50%, transparent); }
+.md-preview a:hover { border-bottom-style: solid; }
+.md-preview code {
+  font-family: var(--font-mono);
+  font-size: 0.8125em;
+  padding: 0.125rem 0.375rem;
+  border-radius: 6px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+}
+.md-preview pre {
+  padding: 1rem 1.125rem;
+  border-radius: 14px;
+  overflow-x: auto;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+.md-preview pre code { background: transparent; border: none; padding: 0; }
+.md-preview blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.md-preview table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+.md-preview :is(th, td) { border: 1px solid var(--glass-border); padding: 0.5rem 0.75rem; text-align: left; }
+.md-preview th { background: var(--glass); color: var(--text); }
+.md-preview img { max-width: 100%; border-radius: 14px; border: 1px solid var(--glass-border); }
+.md-preview hr { border: none; border-top: 1px solid var(--glass-border); margin: 1.5rem 0; }
+
+/* --- Focus mode: editor centered, sidebar hidden (class on the root) --- */
+
+.focus-mode .editor-wrap {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   Animations. Every entrance respects prefers-reduced-motion (see the
+   media query at the bottom). Spring curve = --ease-spring.
+   ========================================================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.18s ease both; }
+
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-in { animation: slide-in 0.22s var(--ease-out) both; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-scale-in { animation: scale-in 0.22s var(--ease-spring) both; }
+
+@keyframes menu-in {
+  from { opacity: 0; transform: scale(0.97) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-menu-in { animation: menu-in 0.16s var(--ease-out) both; }
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-modal-in { animation: modal-in 0.24s var(--ease-spring) both; }
+
+
+
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+
+/* Note-card entrance: overshoot spring, used with --i stagger (see above). */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes aurora-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); opacity: 0.9; }
+  to { transform: translate3d(2%, 2%, 0) scale(1.06); opacity: 1; }
+}
+
+/* Honor users who prefer reduced motion: kill entrances/transitions but */
+/* keep content fully visible (animations end at opacity 1 regardless). */
+/* Windows forced-colors mode: glass/border colors are replaced by system */
+/* colors so chrome stays visible; accent/danger map to system links. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .aurora { animation: none; }
+}
+
+@media (forced-colors: active) {
+  .glass, .glass-strong, .glass-panel, .glass-menu, .glass-chip, .note-card {
+    background: Canvas;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid CanvasText;
+    box-shadow: none;
+  }
+  .btn-accent {
+    background: Highlight;
+    color: HighlightText;
+    border: 1px solid Highlight;
+  }
+  .note-card.active {
+    border: 2px solid Highlight;
+    box-shadow: none;
+  }
+  .md-preview a { color: LinkText; }
+  .theme-danger { color: MarkText; }
+}
+
+/* The card stagger (--i * 40ms) is flattened by the
+   prefers-reduced-motion rule above, which forces animation-delay to
+   0ms — without that, later cards would stay invisible for up to 0.5s
+   for an animation the user cannot perceive. */
