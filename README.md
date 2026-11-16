@@ -67,6 +67,7 @@ folders.json      folder list
 trash.json        trash list
 Trash/            deleted notes (restorable)
 All Notes.txt     the whole collection, as one backup file
+All Notes.previous.txt  the previous backup, kept in case the newest is lost
 ```
 
 ## Build from source
@@ -86,6 +87,19 @@ Linux works with `cargo-xwin`: `cargo xwin build --release --target x86_64-pc-wi
 
 Folio is fully offline and stores everything as plain files you
 own. See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+
+**Plain files means no encryption.** Your notes are readable by
+anyone who can open the Folio folder — there is no password or lock.
+Don't keep secrets in Folio unless the folder itself is protected
+(a private user account, an encrypted drive).
+
+**The backup lives in the same folder.** `All Notes.txt` (and its
+previous copy) protect you against a bad save or a deleted note,
+not against losing the folder or the disk. Copy the folder — or use
+Settings → Export — to keep a second copy somewhere else.
+
+Each note is capped at 4 MB of text, which is far beyond any real
+note.
 
 ## Credits
 
