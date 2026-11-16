@@ -16,6 +16,11 @@ and stores notes as plain Markdown files next to the exe. The most
 sensitive thing Folio handles is the content of your own notes on your
 own machine.
 
+Notes are **not encrypted** and there is no app lock: anyone who can
+open the Folio folder can read every note. That is the deliberate
+tradeoff of plain files you own — protect the folder itself if the
+notes are private.
+
 Reports that matter most:
 
 - Any way for note content to be lost, corrupted, or overwritten silently
