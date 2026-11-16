@@ -24,10 +24,6 @@
   <a href="https://t.me/AskKawaBot"><img src="https://img.shields.io/badge/Telegram_Bot-@AskKawaBot-26A5E4?logo=telegram&logoColor=white" alt="Telegram Bot"></a>
 </p>
 
-## Download
-
-Grab `Folio.exe` from the [Releases](https://github.com/iK4w4/Folio/releases) page. One portable file — drop it in any folder or on a USB drive and run it. Everything it needs lives next to the exe.
-
 ## Screenshots
 
 ![Folio in Light mode, Split view](screenshots/light-white.png)
@@ -35,6 +31,11 @@ Grab `Folio.exe` from the [Releases](https://github.com/iK4w4/Folio/releases) pa
 
 ![Folio in Light mode, Preferences open](screenshots/light-blue.png)
 *Light mode — Royal Blue, Preferences with the sixteen palettes*
+
+## Download
+
+Grab `Folio.exe` from the [Releases](https://github.com/iK4w4/Folio/releases) page. One portable file — drop it in any folder or on a USB drive and run it. Everything it needs lives next to the exe.
+
 
 ## Features
 
