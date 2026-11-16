@@ -1,16 +1,40 @@
-# Folio
+<p align="center">
+  <img src="src-tauri/icons/icon-1024.png" width="120" alt="Folio icon">
+</p>
 
-A small, fast, portable notes app for Windows. Notes are plain Markdown files on disk — no accounts, no cloud, no lock-in. If the app ever goes away, your notes stay readable.
+<h1 align="center">Folio</h1>
 
-[![Release](https://img.shields.io/github/v/release/iK4w4/Folio)](https://github.com/iK4w4/Folio/releases) ![Platform](https://img.shields.io/badge/platform-Windows_10_%2F_11-333) ![Built with](https://img.shields.io/badge/built_with-Tauri_2_·_Rust_·_React-007ec6) ![Download size](https://img.shields.io/badge/download_size-~4.6_MB-brightgreen) ![License](https://img.shields.io/badge/license-MIT-333)
+<p align="center">
+  A small, fast, portable notes app for Windows.<br>
+  Notes are plain Markdown files on disk — no accounts, no cloud, no lock-in.<br>
+  If the app ever goes away, your notes stay readable.
+</p>
 
-[![YouTube](https://img.shields.io/badge/YouTube-@iK4w4-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/@iK4w4)
-[![Telegram](https://img.shields.io/badge/Telegram-@iK4w4-26A5E4?logo=telegram&logoColor=white)](https://t.me/iK4w4)
-[![Telegram Bot](https://img.shields.io/badge/Telegram_Bot-@AskKawaBot-26A5E4?logo=telegram&logoColor=white)](https://t.me/AskKawaBot)
+<p align="center">
+  <a href="https://github.com/iK4w4/Folio/releases"><img src="https://img.shields.io/github/v/release/iK4w4/Folio" alt="Release"></a>
+  <img src="https://img.shields.io/badge/platform-Windows_10_%2F_11-333" alt="Platform">
+  <img src="https://img.shields.io/badge/built_with-Tauri_2_·_Rust_·_React-007ec6" alt="Built with">
+  <img src="https://img.shields.io/badge/download_size-~4.6_MB-brightgreen" alt="Download size">
+  <img src="https://img.shields.io/badge/license-MIT-333" alt="License">
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/@iK4w4"><img src="https://img.shields.io/badge/YouTube-@iK4w4-FF0000?logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://t.me/iK4w4"><img src="https://img.shields.io/badge/Telegram-@iK4w4-26A5E4?logo=telegram&logoColor=white" alt="Telegram"></a>
+  <a href="https://t.me/AskKawaBot"><img src="https://img.shields.io/badge/Telegram_Bot-@AskKawaBot-26A5E4?logo=telegram&logoColor=white" alt="Telegram Bot"></a>
+</p>
 
 ## Download
 
 Grab `Folio.exe` from the [Releases](https://github.com/iK4w4/Folio/releases) page. One portable file — drop it in any folder or on a USB drive and run it. Everything it needs lives next to the exe.
+
+## Screenshots
+
+![Folio in Light mode with the Mist Slate palette](screenshots/light-white.png)
+*Light mode — Mist Slate*
+
+![Folio in Light mode with the Royal Blue palette](screenshots/light-blue.png)
+*Light mode — Royal Blue*
 
 ## Features
 
