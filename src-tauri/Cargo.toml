@@ -1,6 +1,6 @@
 [package]
 name = "folio"
-version = "1.0.14"
+version = "1.0.15"
 description = "A fast, portable, liquid-glass notes app for Windows"
 authors = ["iK4w4"]
 edition = "2021"
