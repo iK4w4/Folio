@@ -5,6 +5,14 @@ All notable changes to Folio are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.15] - 2026-11-16
+
+- Backup now keeps one previous generation (`All Notes.previous.txt`);
+  if `All Notes.txt` is missing, restore falls back to it
+- README and SECURITY now state plainly that notes are not encrypted
+  and that the backup sits in the same folder — copy it elsewhere
+- The 4 MB per-note limit is documented
+
 ## [1.0.14] - 2026-11-16
 
 First public release.
