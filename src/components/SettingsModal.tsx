@@ -228,7 +228,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     try {
       const result = await exportBackupCopy();
       if (isTauri()) {
-        // Desktop: the backend wrote a copy into Exports/ and returned its path.
+        // Desktop: the backend wrote a copy into Documents/Folio and returned its path.
         setExportFeedback(`Saved a copy of All Notes.txt to: ${result}`);
         return;
       }

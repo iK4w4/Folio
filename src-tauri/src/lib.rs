@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use chrono::{Local, TimeZone};
-use rand::Rng;
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -315,7 +315,7 @@ fn atomic_write_file(path: &Path, content: &str) -> Result<(), String> {
                 .map_err(|e| format!("cannot create folder {}: {}", parent.display(), e))?;
         }
     }
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let tmp_name = format!(
         ".tmp-{}-{:x}-{:x}",
         std::process::id(),
@@ -323,7 +323,7 @@ fn atomic_write_file(path: &Path, content: &str) -> Result<(), String> {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos())
             .unwrap_or(0),
-        rng.gen::<u64>()
+        rng.random::<u64>()
     );
     let mut tmp = path.to_path_buf();
     tmp.set_file_name(tmp_name);
@@ -1067,8 +1067,8 @@ fn unique_bare_name(base: &str) -> String {
         if n == u32::MAX {
             // Never spin forever if the counter ever wrapped: fall back
             // to a random suffix instead of handing back a taken name.
-            let mut rng = rand::thread_rng();
-            let suffix = format!("_{}_{}.md", n, rng.gen::<u64>());
+            let mut rng = rand::rng();
+            let suffix = format!("_{}_{}.md", n, rng.random::<u64>());
             return format!("{}{}", stem_fitting(stem, &suffix), suffix);
         }
         n += 1;
@@ -1088,8 +1088,8 @@ fn generate_safe_file_name(content: &str) -> String {
     let date_prefix = now.format("%Y-%m-%d_%H-%M-%S").to_string();
     let truncated_slug = slug_from_content(content);
 
-    let mut rng = rand::thread_rng();
-    let hex: u32 = rng.gen();
+    let mut rng = rand::rng();
+    let hex: u32 = rng.random();
 
     let candidate = if truncated_slug.is_empty() {
         format!("{}_note_{:08x}.md", date_prefix, hex)
@@ -1327,8 +1327,8 @@ fn trash_one(path: &PathBuf, file_name: &str, folder: &str) -> Result<(), String
         // "NOTE.MD" becomes "NOTE_12-00-00_abcd1234.md" (not "NOTE.MD_...").
         let stem = md_stem(file_name);
         let stamp = Local::now().format("%H-%M-%S").to_string();
-        let mut rng = rand::thread_rng();
-        let hex: u32 = rng.gen();
+        let mut rng = rand::rng();
+        let hex: u32 = rng.random();
         let mut suffix = format!("_{}_{:08x}.md", stamp, hex);
         let mut candidate =
             trash_dir().join(format!("{}{}", stem_fitting(stem, &suffix), suffix));
@@ -1575,6 +1575,22 @@ fn empty_trash() -> Result<bool, String> {
 // No save dialog plugin needed; the folder is right next to the app.
 // ===========================================================================
 
+/// Where an exported backup copy goes: a `Folio` folder inside the
+/// user's Documents, so the copy survives the app folder being moved
+/// or deleted. Falls back to the app-folder Exports/ when no user
+/// profile is available.
+fn backup_export_dir() -> PathBuf {
+    if let Some(profile) = std::env::var_os("USERPROFILE") {
+        if !profile.is_empty() {
+            let dir = PathBuf::from(profile).join("Documents").join("Folio");
+            if fs::create_dir_all(&dir).is_ok() {
+                return dir;
+            }
+        }
+    }
+    exports_dir()
+}
+
 fn exports_dir() -> PathBuf {
     let dir = get_app_dir().join("Exports");
     if !dir.exists() {
@@ -1613,8 +1629,8 @@ fn export_path_for(dir: &Path, file_name: &str, content: &str) -> PathBuf {
             return candidate;
         }
         if n == u32::MAX {
-            let mut rng = rand::thread_rng();
-            return dir.join(format!("{}_{}_{}.md", stem, n, rng.gen::<u64>()));
+            let mut rng = rand::rng();
+            return dir.join(format!("{}_{}_{}.md", stem, n, rng.random::<u64>()));
         }
         n += 1;
     }
@@ -2036,9 +2052,9 @@ fn delete_folder(folder_name: String, delete_contained_notes: bool) -> Result<bo
                                 candidate =
                                     format!("{}{}", stem_fitting(stem, &suffix), suffix);
                                 if n == u32::MAX {
-                                    let mut rng = rand::thread_rng();
+                                    let mut rng = rand::rng();
                                     let suffix =
-                                        format!("_{}_{}.md", n, rng.gen::<u64>());
+                                        format!("_{}_{}.md", n, rng.random::<u64>());
                                     candidate = format!(
                                         "{}{}",
                                         stem_fitting(stem, &suffix),
@@ -2312,9 +2328,9 @@ fn open_data_dir(app: tauri::AppHandle) -> Result<(), String> {
         .map_err(|e| format!("Could not open the data folder: {e}"))
 }
 
-// Copy the live All Notes.txt backup into Exports/ so "Export All Notes.txt"
-// works in the desktop app. The backup is regenerated first if it is
-// somehow missing.
+// Copy the live All Notes.txt backup into Documents/Folio so "Export All
+// Notes.txt" works in the desktop app and the copy lives outside the app
+// folder. The backup is regenerated first if it is somehow missing.
 #[tauri::command]
 fn export_backup() -> Result<String, String> {
     let src = get_app_dir().join("All Notes.txt");
@@ -2328,7 +2344,7 @@ fn export_backup() -> Result<String, String> {
     // Lossy read, like export_note: an export must never fail (or lose
     // readable text) just because one byte in the backup is invalid UTF-8.
     let content = read_note_content(&src);
-    let dest = exports_dir().join("All Notes.txt");
+    let dest = backup_export_dir().join("All Notes.txt");
     atomic_write_file(&dest, &content)?;
     Ok(dest.display().to_string())
 }

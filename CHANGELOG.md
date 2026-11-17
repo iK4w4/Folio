@@ -5,6 +5,15 @@ All notable changes to Folio are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.16] - 2026-11-17
+
+- Exported backup copies now go to a `Folio` folder in your Documents,
+  outside the app folder (falls back to `Exports/` if Documents is
+  unavailable)
+- First frontend tests: the note-preview HTML sanitizer is covered by
+  an automated test suite
+- Updated the `rand` dependency to 0.10
+
 ## [1.0.15] - 2026-11-16
 
 - Backup now keeps one previous generation (`All Notes.previous.txt`);

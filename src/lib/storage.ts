@@ -831,7 +831,7 @@ export async function restoreFromBackup(): Promise<{ restoredCount: number; mess
   };
 }
 
-/** Copy the live All Notes.txt backup into Exports/ (desktop only). */
+/** Copy the live All Notes.txt backup into Documents/Folio (desktop only). */
 export async function exportBackupCopy(): Promise<string> {
   if (isTauri()) {
     return await invokeTauri<string>('export_backup');
