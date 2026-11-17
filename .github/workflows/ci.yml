@@ -20,9 +20,11 @@ jobs:
         run: npx tsc --noEmit
       - name: Build frontend
         run: npm run build
+      - name: Frontend tests
+        run: npm test
       - name: Rust tests
         working-directory: src-tauri
-        run: cargo test
+        run: cargo test --locked
       - name: Install cargo-audit
         uses: taiki-e/install-action@cargo-audit
       - name: Rust audit
