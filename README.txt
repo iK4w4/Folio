@@ -1,4 +1,4 @@
-Folio 1.0.14 — portable notes app for Windows
+Folio 1.0.15 — portable notes app for Windows
 Created by iK4w4 — Support: https://t.me/AskKawaBot
 
 HOW TO USE
@@ -17,3 +17,4 @@ Copy the whole folder to a USB drive or another PC and everything moves
 with it. Your notes stay readable as plain Markdown even without the app.
 
 100% offline: no accounts, no cloud, no tracking, no network calls.
+Each note is capped at 4 MB of text — far beyond any real note.

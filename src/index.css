@@ -3,7 +3,7 @@
 
 /* ==========================================================================
    Folio — liquid glass design system ("premium glassmorphism").
-   Colors come from the 16 Pico palettes (src/lib/themes.ts): applyTheme()
+   Colors come from the 16 Folio palettes (src/lib/themes.ts): applyTheme()
    sets --bg / --surface / --raised / --border / --text / --muted /
    --faint / --accent / --accent-2 / --accent-text / --danger / --ok /
    --warn / --shadow PLUS the glass material tokens --glass /

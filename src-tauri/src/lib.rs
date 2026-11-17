@@ -31,7 +31,7 @@ pub struct FolderInfo {
 pub struct AppSettings {
     #[serde(default = "default_theme")]
     theme: String,
-    /// Pico palette id (see src/lib/themes.ts). The liquid-glass
+    /// Folio palette id (see src/lib/themes.ts). The liquid-glass
     /// intensity (0-100, default 70) drives the frosted look.
     #[serde(default = "default_palette")]
     palette: String,
@@ -112,7 +112,7 @@ impl Default for AppSettings {
 /// filling disk via All Notes.txt rewrites.
 const MAX_CONTENT_BYTES: usize = 4 * 1024 * 1024;
 
-/// Pico palette ids (kept in sync with PALETTE_IDS in src/lib/storage.ts).
+/// Folio palette ids (kept in sync with PALETTE_IDS in src/lib/storage.ts).
 const PALETTE_IDS: &[&str] = &[
     "forest", "ember", "sage", "lagoon", "ultraviolet", "indigo", "graphite",
     "violet", "bronze", "teal", "mist", "lavender", "royal", "tangerine",
@@ -2160,8 +2160,9 @@ fn toggle_pin(file_name: String, pinned: bool) -> Result<bool, String> {
 fn restore_backup() -> Result<RestoreResult, String> {
     let _guard = lock_registry();
     // Fall back to the previous generation when the newest backup is
-    // missing (deleted or corrupted) — one lost file must not mean no
-    // backup at all.
+    // missing — one lost file must not mean no backup at all. (A
+    // present-but-corrupted newest backup is read lossily instead;
+    // the previous generation is not consulted in that case.)
     let backup_path = get_app_dir().join("All Notes.txt");
     let backup_path = if backup_path.exists() {
         backup_path

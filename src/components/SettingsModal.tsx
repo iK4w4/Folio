@@ -307,14 +307,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* Scrollable body. The 10px gutter keeps every row clear of the
             scrollbar, whose thumb would otherwise clip their right corners. */}
         <div className="flex-1 overflow-y-auto py-5 space-y-6 pr-2.5">
-          {/* Color Theme — the Pico palettes */}
+          {/* Color Theme — the Folio palettes */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
               <Palette className="w-4 h-4 theme-accent" />
               <label className="text-xs font-semibold uppercase tracking-wider">Color Theme</label>
             </div>
             <p className="text-[11px] theme-muted leading-relaxed">
-              Pico's sixteen palettes. Pick one — it colors the whole app, and it is saved with your other settings.
+              Folio's sixteen palettes. Pick one — it colors the whole app, and it is saved with your other settings.
             </p>
             <div className="grid grid-cols-2 gap-2">
               {PALETTES.map((p) => {

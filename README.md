@@ -48,7 +48,7 @@ USB drive. Everything it needs lives next to the exe.
 | **Folders** | Real subfolders under `Notes/` — drag a note onto a folder to move it |
 | **Right-click actions** | Pin, move, duplicate, export, and trash, all in the note's menu |
 | **Search & sort** | Live search over title and body; sort by Created, Newest, Oldest, or A–Z |
-| **One backup file** | `All Notes.txt` next to the exe holds the whole collection, rewritten after every change |
+| **Backup file** | `All Notes.txt` next to the exe holds the whole collection, rewritten after every change — the previous copy is kept as `All Notes.previous.txt` |
 | **Themes** | Dark and Light mode, sixteen color palettes, zoom 90–150% |
 | **Formatting toolbar** | Bold, italic, code, headings, lists, quote, link, image, divider |
 | **Single instance** | Opening Folio again focuses the running window instead of a second copy |

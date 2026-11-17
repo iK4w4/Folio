@@ -19,7 +19,7 @@ export interface Folder {
 
 export type SortMode = 'newest' | 'oldest' | 'az' | 'created';
 
-/** Pico palette ids — mirrors PALETTES in src/lib/themes.ts. */
+/** Folio palette ids — mirrors PALETTES in src/lib/themes.ts. */
 export type PaletteId =
   | 'forest' | 'ember' | 'sage' | 'lagoon' | 'ultraviolet' | 'indigo'
   | 'graphite' | 'violet' | 'bronze' | 'teal' | 'mist' | 'lavender'
@@ -32,7 +32,7 @@ export type EditorFontFamily = 'system' | 'serif' | 'mono';
 
 export interface AppSettings {
   theme: 'dark' | 'light';
-  /** Pico palette id (see src/lib/themes.ts). */
+  /** Folio palette id (see src/lib/themes.ts). */
   palette: PaletteId;
   /** 90 to 150. */
   zoom: number;

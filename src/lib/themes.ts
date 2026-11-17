@@ -1,11 +1,11 @@
-// Pico theme system.
+// Folio theme system.
 //
 // A palette is six hexes in stack order. deriveTheme() turns a palette + mode
 // (dark/light) into the full design-token set, and deriveGlassTokens() builds
 // the frosted-glass material from the same slots — one mapping, so themes
 // cannot drift apart.
 //
-// Pico role mapping (slots, top → bottom of the source cards):
+// Folio role mapping (slots, top → bottom of the source cards):
 // slot 1 deep base → dark surface; light-mode ink
 // slot 2 raised   → dark raised-family
 // slot 3 mid      → fills; light accent
