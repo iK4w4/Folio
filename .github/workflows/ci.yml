@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.100.0
       - name: Install frontend dependencies
         run: npm ci
       - name: Type-check frontend
