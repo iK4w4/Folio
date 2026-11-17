@@ -1577,15 +1577,15 @@ fn empty_trash() -> Result<bool, String> {
 
 /// Where an exported backup copy goes: a `Folio` folder inside the
 /// user's Documents, so the copy survives the app folder being moved
-/// or deleted. Falls back to the app-folder Exports/ when no user
-/// profile is available.
+/// or deleted. Documents is resolved through the Windows known-folders
+/// API (via `dirs`), so OneDrive folder redirection is respected.
+/// Falls back to the app-folder Exports/ only when the real Documents
+/// folder cannot be resolved or created.
 fn backup_export_dir() -> PathBuf {
-    if let Some(profile) = std::env::var_os("USERPROFILE") {
-        if !profile.is_empty() {
-            let dir = PathBuf::from(profile).join("Documents").join("Folio");
-            if fs::create_dir_all(&dir).is_ok() {
-                return dir;
-            }
+    if let Some(docs) = dirs::document_dir() {
+        let dir = docs.join("Folio");
+        if fs::create_dir_all(&dir).is_ok() {
+            return dir;
         }
     }
     exports_dir()

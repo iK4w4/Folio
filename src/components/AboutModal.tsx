@@ -128,7 +128,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <p className="text-xs theme-accent font-semibold mt-1">Created by iK4w4</p>
             <p className="text-[11px] theme-muted font-mono mt-1">v{__APP_VERSION__}</p>
             <p className="text-[11px] theme-muted mt-2">
-              Fast, portable notes for Windows — your notes as plain .md files, with Pico color themes and frosted glass.
+              Fast, portable notes for Windows — your notes as plain .md files, with Folio color themes and frosted glass.
             </p>
           </div>
 

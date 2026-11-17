@@ -1,4 +1,4 @@
-Folio 1.0.16 — portable notes app for Windows
+Folio 1.0.17 — portable notes app for Windows
 Created by iK4w4 — Support: https://t.me/AskKawaBot
 
 HOW TO USE

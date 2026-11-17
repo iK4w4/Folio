@@ -5,6 +5,14 @@ All notable changes to Folio are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.17] - 2026-11-17
+
+- Backup export now resolves Documents through the Windows
+  known-folders API, so OneDrive folder redirection is respected;
+  the app-folder fallback only triggers if Documents cannot be used
+- About dialog now says Folio color themes (it said Pico)
+- Release checksums are SHA-256 from this release on
+
 ## [1.0.16] - 2026-11-17
 
 - Exported backup copies now go to a `Folio` folder in your Documents,

@@ -71,6 +71,8 @@ All Notes.txt     the whole collection, as one backup file
 All Notes.previous.txt  the previous backup, kept in case the newest is lost
 ```
 
+The Export button also copies `All Notes.txt` to a `Folio` folder in your Documents, so a copy survives outside the app folder.
+
 ## Build from source
 
 You need Node.js 18+, Rust (stable, MSVC), and WebView2

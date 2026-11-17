@@ -31,6 +31,6 @@ Reports that matter most:
 ## Verifying a download
 
 Release executables are published on the
-[Releases](https://github.com/iK4w4/Folio/releases) page with an MD5
+[Releases](https://github.com/iK4w4/Folio/releases) page with a SHA-256
 checksum in the release notes. Compare it with the file you downloaded
 before running it.
